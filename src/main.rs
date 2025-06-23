@@ -11,7 +11,16 @@ fn do_something()
 
 async fn is_server_running()->bool
 {
-    if let Ok(val)=reqwest::get("http://127.0.0.1/no-op").await {
+    let http_port=match env::var("HTTP_PORT") {
+        Ok(val)=>val.parse::<u32>().unwrap_or(80),
+        _=>80_u32
+    };
+    let url=format!("http://127.0.0.1{}/no-op",if http_port == 80 {
+        "".to_string()
+    } else {
+        format!(":{}",http_port)
+    });
+    if let Ok(val)=reqwest::get(&url).await {
         val.text().await.map(|s|&s=="true").unwrap_or(false)
     } else {
         false
@@ -42,6 +51,7 @@ async fn start_ping()
 
 pub async fn start_server() -> anyhow::Result<()>
 {
+    dotenv::dotenv().ok();
     let bind_ip=match env::var("APP_BIND_IP") {
         Ok(val)=>val,
         _=>"0.0.0.0".to_string()

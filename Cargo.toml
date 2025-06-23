@@ -7,6 +7,7 @@ edition = "2024"
 actix = "0.13.5"
 actix-web = "4.11.0"
 anyhow = "1.0.98"
+dotenv = "0.15.0"
 ping-rs = "0.1.2"
 reqwest = "0.12.20"
 tokio = { version = "1.45.1", features = ["default", "rt"] }
